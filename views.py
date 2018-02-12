@@ -114,7 +114,7 @@ def signup(request):
 					host = request.get_host()
 					emailbody = """Dear """ + username + """ :
 
-Welcome to MrTuesday! Please activate your email address by click the link : """ + host + """/blog/confirm/""" + encrypted + """
+Welcome to MrTuesday! Please activate your email address by clicking the link : """ + host + """/blog/confirm/""" + encrypted + """
 
 Thank you!"""
 					SendEmail("Activate Email.", emailbody, email)
