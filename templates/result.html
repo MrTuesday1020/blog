@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% block content %}
+<div class="container col-md-8 text-center mb-5">
+	<h1>Search Result</h1>
+	<h><strong>{{ lenOfresults }}</strong> {% if lenOfresults > 1 %}results{% else %}result{% endif %} about "<strong>{{ keyword }}</strong>" in <strong>{{ selection }}</strong>.</h>
+</div>
+<div class="container col-md-8">
+	{% if selection == 'article' and results %}
+		{% for article in results %}
+			<div class="row">
+				<div class="col-md-10">
+					<h2><a href="{% url 'blog:article' article.id %}">{{ article.title }}</a></h2>
+				</div>
+
+				<div class="col-md-2">
+					<div class="font-weight-bold text-right">
+						{{ article.modified_time|date:"d M" }}
+					</div>
+					<div class="text-right">
+						<small>{{ article.modified_time|date:"Y" }}</small>
+					</div>
+				</div>
+			</div>
+			<div class="row border border-top-0 border-right-0 border-left-0 pb-3 mb-4">
+				<div class="col-md-12">
+					{% autoescape off %}
+					{{ article.content | truncatechars:255 }}
+					{% endautoescape %}
+				</div>
+			</div>
+		{% endfor %}
+	{% elif selection == 'user' and results %}
+		{% for user in results %}
+			<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+				<div class="col-md-1">
+					<div class="square">
+						<a href="{% url 'blog:profile' user.id %}"><img class="sqaure-image rounded" src="{{ user.image.url }}" /></a>
+					</div>
+				</div>
+				<div class="col-md-9 pl-0">
+					<h3><a href="{% url 'blog:profile' user.id %}">{{ user.username }}</a></h3>
+				</div>
+				{% if request.session.account  %}
+					{% if user.id != request.session.account.id %}
+					<div class="col-md-2">
+						{% if is_followed %}
+						<button class="btn btn-outline-primary btn-sm mt-1">/button>
+						{% else %}
+						<button class="btn btn-primary btn-sm mt-1">Follow</button>
+						{% endif %}
+					</div>
+					{% endif %}
+						{% else %}
+						<div class="col-md-2">
+							<button class="btn btn-primary btn-sm mt-1 login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
+						</div>
+					{% endif %}
+			</div>
+		{% endfor %}
+	{% endif %}
+</div>
+
+{% if results %}
+<div class="paginator mt-4">
+	{% if results.has_previous %}<div class="side page-item"><form action="{% url 'blog:search' %}" method="POST">{% csrf_token %}<input type="hidden" name="page" value={{ results.previous_page_number }}><input type="hidden" name="keyword" value={{ keyword }}><input type="hidden" name="selection" value={{ selection }}><button class="page-link" type="submit"><</button></form></div>{% else %}<div class="side"></div>{% endif %}<div class="middle page-middle">Page {{ results.number }} of {{ results.paginator.num_pages }}</div>{% if results.has_next %}<div class="side page-item"><form href="{% url 'blog:search' %}" method="POST">{% csrf_token %}<input type="hidden" name="page" value={{ results.next_page_number }}><input type="hidden" name="keyword" value={{ keyword }}><input type="hidden" name="selection" value={{ selection }}><button type="submit" class="page-link">></button></form></div>{% else %}<div class="side"></div>{% endif %}
+</div>
+{% endif %}
+{% endblock %}`

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% block content %}
+	
+<div class="container col-md-8">
+	<div class="row py-2">
+		<form class="col-md-3" action="" enctype="multipart/form-data" method="POST">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="square">
+						<img class="rounded sqaure-image" id="img_id" src="{{ user.image.url }}">
+					</div>
+				</div>
+			</div>
+			<div class="row mt-4 file-box">
+				<input type="file" class="custom-file-input" id="customFileLang" name="image" lang="es" onchange="upload_img(this);" required>
+				<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+			</div>
+			<div class="row mt-4">
+				<div class="col-md-12 text-center">
+					<button class="btn btn-primary" type="Submit" name="imageUpload">Upload</button>
+				</div>
+			</div>
+		</form>
+		<form class="col-md-9" enctype="multipart/form-data" method="POST">
+			{% csrf_token %}
+			<div class="row py-2">
+				<label class="col-md-2 col-form-label">Username</label>
+				<div class="col-md-10">
+					{{ form.username }}
+				</div>
+			</div>
+			<div class="row py-2">
+				<label class="col-md-2 col-form-label">Email</label>
+				<div class="col-md-10">
+					{{ form.email }}
+				</div>
+			</div>
+			<div class="row py-2">
+				<label class="col-md-2 col-form-label">Profile</label>
+				<div class="col-md-10">
+					{{ form.profile }}
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-md-12 text-right">
+					<button class="btn btn-primary" type="Submit">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

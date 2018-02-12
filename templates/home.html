@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% block content %}
+<div class="container col-md-8">
+	{% for article in articles %}
+	<div class="row py-2 border">
+		<div class="col-md-1">
+			<div class="square">
+				<a href="{% url 'blog:profile' article.author.id %}"><img class="sqaure-image rounded" src="{{ article.author.image.url }}"/></a>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<a href="{% url 'blog:article' article.id %}">
+			<div class="font-weight-bold">
+				<h5>{{ article.title }}</h5>
+			</div>
+			</a>
+			<div class="row" id="article" article-id={{ article.id }}>
+					<div class="col-md-2"><a class="my-btn-color" href="{% url 'blog:article' article.id %}"><i class="ion-chatbox-working"></i></a> <span> {{ article.comment_nb }} </span></div>
+					{% if request.session.account  %}
+						{% if article.liked == 0 %}
+						<div class="col-md-2"><span class="my-btn-color like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+						{% else %}
+						<div class="col-md-2"><span class="dislike like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+						{% endif %}
+					{% else %}
+						<div class="col-md-2"><span class="my-btn-color login-btn" data-toggle="modal" data-target="#login-modal"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+					{% endif %}
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="font-weight-bold text-right">
+				{{ article.modified_time|date:"d M" }}
+			</div>
+			<div class="text-right">
+				<small>{{ article.modified_time|date:"Y" }}</small>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<div class="paginator mt-4">
+	{% if articles.has_previous %}<div class="side page-item"><a class="page-link" href="{% url 'blog:home' articles.previous_page_number %}"><</a></div>{% else %}<div class="side"></div>{% endif %}<div class="middle page-middle">Page {{ articles.number }} of {{ articles.paginator.num_pages }}</div>{% if articles.has_next %}<div class="side page-item"><a class="page-link" href="{% url 'blog:home' articles.next_page_number %}">></a></div>{% else %}<div class="side"></div>{% endif %}
+</div>
+{% endblock %}

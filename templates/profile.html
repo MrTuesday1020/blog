@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% block content %}
+<div class="container col-md-8">
+	<div class="row py-2">
+		<div class="col-md-3">
+			<div class="square">
+				<img class="sqaure-image rounded" src="{{ user.image.url }}">
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="row py-2">
+				<div class="col-md-6">
+					<h3>{{ user.username }}</h3>
+				</div>
+				{% if request.session.account %}
+					{% if user.id == request.session.account.id %}
+					<div class="col-md-3">
+						<button class="btn btn-primary btn-sm" onclick="location.href='{% url 'blog:changepassword' %}';">Change Password</button>
+					</div>
+					<div class="col-md-3">
+						<button class="btn btn-primary btn-sm" onclick="location.href='{% url 'blog:edit' %}';">Edit Profile</button>
+					</div>
+					{% else %}
+					<div class="col-md-6" id="user" user-id={{ user.id }}>
+						{% if is_followed %}
+						<button class="btn btn-outline-primary btn-sm follow-btn">Following</button>
+						{% else %}
+						<button class="btn btn-primary btn-sm follow-btn">Follow</button>
+						{% endif %}
+					</div>
+					{% endif %}
+				{% else %}
+					<div class="col-md-6">
+						<button class="btn btn-primary btn-sm login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
+					</div>
+				{% endif %}
+			</div>
+			<div class="row py-2">
+				<div class="col-md-12">
+					{{ user.profile }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container col-md-8 mt-4">
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active my-btn-color" id="articles-tab" data-toggle="tab" href="#articles" role="tab" aria-controls="articles" aria-selected="true">Articles</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link my-btn-color" id="followers-tab" data-toggle="tab" href="#followers" role="tab" aria-controls="followers" aria-selected="false">Followers</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link my-btn-color" id="following-tab" data-toggle="tab" href="#following" role="tab" aria-controls="following" aria-selected="false">Following</a>
+		</li>
+	</ul>
+	<div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="articles" role="tabpanel" aria-labelledby="articles-tab">
+			<div class="container col-md-12">
+				{% for article in articles %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-10">
+						<a href="{% url 'blog:article' article.id %}">
+							<div class="font-weight-bold">
+								<h5>{{ article.title }}</h5>
+							</div>
+						</a>
+						<div class="row" id="article" article-id={{ article.id }}>
+							<div class="col-md-2"><a class="my-btn-color" href="{% url 'blog:article' article.id %}"><i class="ion-chatbox-working"></i></a> <span> {{ article.comment_nb }} </span></div>
+							{% if request.session.account  %}
+								{% if article.liked == 0 %}
+								<div class="col-md-2"><span class="my-btn-color like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+								{% else %}
+								<div class="col-md-2"><span class="dislike like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+								{% endif %}
+							{% else %}
+								<div class="col-md-2"><span class="my-btn-color login-btn" data-toggle="modal" data-target="#login-modal"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></div>
+							{% endif %}
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="font-weight-bold text-right">
+							{{ article.modified_time|date:"d M" }}
+						</div>
+						<div class="text-right">
+							<small>{{ article.modified_time|date:"Y" }}</small>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+			<div class="container col-md-12">
+				{% for follower in followers %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-1">
+						<div class="square">
+							<a href="{% url 'blog:profile' follower.user.id %}"><img class="sqaure-image rounded" src="{{ follower.user.image.url }}" /></a>
+						</div>
+					</div>
+					<div class="col-md-9 pt-1 pl-0">
+						<a href="{% url 'blog:profile' follower.user.id %}">{{ follower.user.username }}</a>
+					</div>
+					{% if request.session.account %}
+						{% if follower.user.id != request.session.account.id %}
+						<div class="col-md-2" id="user" user-id={{ follower.user.id }}>
+							{% if follower.is_followed %}
+							<button class="btn btn-outline-primary btn-sm follow-btn">Following</button>
+							{% else %}
+							<button class="btn btn-primary btn-sm follow-btn">Follow</button>
+							{% endif %}
+						</div>
+						{% endif %}
+					{% else %}
+						<div class="col-md-2">
+							<button class="btn btn-primary btn-sm login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
+						</div>
+					{% endif %}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+			<div class="container col-md-12">
+				{% for following in followings %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-1">
+						<div class="square">
+							<a href="{% url 'blog:profile' following.user.id %}"><img class="sqaure-image rounded" src="{{ following.user.image.url }}" /></a>
+						</div>
+					</div>
+					<div class="col-md-9 pt-1 pl-0">
+						<a href="{% url 'blog:profile' following.user.id %}">{{ following.user.username }}</a>
+					</div>
+					{% if request.session.account %}
+						{% if following.user.id != request.session.account.id %}
+						<div class="col-md-2" id="user" user-id={{ following.user.id }}>
+							{% if following.is_followed %}
+							<button class="btn btn-outline-primary btn-sm follow-btn">Following</button>
+							{% else %}
+							<button class="btn btn-primary btn-sm follow-btn">Follow</button>
+							{% endif %}
+						</div>
+						{% endif %}
+					{% else %}
+						<div class="col-md-2">
+							<button class="btn btn-primary btn-sm login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
+						</div>
+					{% endif %}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% load myfilter %}
+{% block content %}
+<div class="container col-md-8">
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active my-btn-color" id="comments-tab" data-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="true">Comments</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link my-btn-color" id="replies-tab" data-toggle="tab" href="#replies" role="tab" aria-controls="replies" aria-selected="true">Replies</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link my-btn-color" id="likes-tab" data-toggle="tab" href="#likes" role="tab" aria-controls="likes" aria-selected="false">Likes</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link my-btn-color" id="followers-tab" data-toggle="tab" href="#followers" role="tab" aria-controls="followers" aria-selected="false">Followers</a>
+		</li>
+	</ul>
+	<div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+			<div class="container col-md-12">
+				{% for comment in comments %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-12">
+						<a href="{% url 'blog:article' comment.article_id %}">
+							<div class="font-weight-bold">
+								<h5>{{ comment.title }}</h5>
+							</div>
+						</a>
+						<div class="row">
+							<div class="col-md-1 mt-2">
+								<div class="square">
+									<a href="{% url 'blog:profile' comment.user_id %}"><img class="rounded sqaure-image" src="{{ comment.user.image.url }}"/></a>
+								</div>
+							</div>
+							<div class="col-md-11">
+								<div><a href="{% url 'blog:profile' comment.user_id %}">{{ comment.user.username }}</a><span class="bullet text-muted">•</span><small class="text-muted">{{ comment.time_stamp|timesince|upto:',' }} ago</small></div>
+								<div>{{ comment.content }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="tab-pane fade" id="replies" role="tabpanel" aria-labelledby="replies-tab">
+			<div class="container col-md-12">
+				{% for reply in replies %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-12">
+						<a href="#">
+							<div class="font-weight-bold">
+								<h5>{{ reply.comment }}</h5>
+							</div>
+						</a>
+						<div class="row">
+							<div class="col-md-1 mt-2">
+								<div class="square">
+									<a href="{% url 'blog:profile' reply.user_id %}"><img class="rounded sqaure-image" src="{{ reply.user.image.url }}"/></a>
+								</div>
+							</div>
+							<div class="col-md-11">
+								<div><a href="{% url 'blog:profile' reply.user_id %}">{{ reply.user.username }}</a><span class="bullet text-muted">•</span><small class="text-muted">{{ reply.time_stamp|timesince|upto:',' }} ago</small></div>
+								<div>{{ reply.content }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+			<div class="container col-md-12">
+				{% for like in likes %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-1">
+						<div class="square">
+							<a href="{% url 'blog:profile' like.user.id %}"><img class="sqaure-image rounded" src="{{ like.user.image.url }}"/></a>
+						</div>
+					</div>
+					<div class="col-md-11 pt-1 pl-0">
+						<a href="{% url 'blog:profile' like.user.id %}">{{ like.user.username }}</a> liked your article <a href="{% url 'blog:article' like.article_id %}">{{ like.title }}</a><span class="bullet text-muted">•</span><small class="text-muted">{{ like.time_stamp|timesince|upto:',' }} ago</small>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+			<div class="container col-md-12">
+				{% for friend in friends %}
+				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
+					<div class="col-md-1">
+						<div class="square">
+							<a href="{% url 'blog:profile' friend.user.id %}"><img class="sqaure-image rounded" src="{{ friend.user.image.url }}"/></a>
+						</div>
+					</div>
+					<div class="col-md-9 pt-1 pl-0">
+						<a href="{% url 'blog:profile' friend.user.id %}">{{ friend.user.username }}</a> started following you <span class="bullet text-muted">•</span><small class="text-muted">{{ friend.time_stamp|timesince|upto:',' }} ago</small>
+					</div>
+					<div class="col-md-2" id="user" user-id={{ friend.user.id }}>
+						{% if friend.is_friend %}
+						<button class="btn btn-outline-primary btn-sm follow-btn">Following</button>
+						{% else %}
+						<button class="btn btn-primary btn-sm follow-btn">Follow</button>
+						{% endif %}
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

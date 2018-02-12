@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load staticfiles%}
+{% load myfilter %}
+{% block content %}<link rel="stylesheet" type="text/css" href="{% static 'css/prism.css'%}">
+<script src="{% static 'js/prism.js'%}"></script>
+<div class="container col-md-10">
+	<div class="row">
+		<div class="col-md-9">
+			<div class="row py-2">
+				<div class="col-md-10">
+					<h2>{{ article.title }}</h2>
+				</div>
+
+				<div class="col-md-2">
+					<div class="font-weight-bold text-right">
+						{{ article.modified_time|date:"d M" }}
+					</div>
+					<div class="text-right">
+						<small>{{ article.modified_time|date:"Y" }}</small>
+					</div>
+				</div>
+			</div>
+			<div class="row pt-2 pb-4 border border-top-0 border-right-0 border-left-0">
+				<div class="col-md-12">
+					{% autoescape off %}
+					{{ article.content }}
+					{% endautoescape %}
+				</div>
+			</div>
+			<div class="row pt-4 pb-3" id="article" article-id={{ article.id }}>
+				{% if request.session.account  %}
+					<div class="col-md-2"><h4><span class="my-btn-color comment-btn" data-toggle="modal" data-target="#comment-modal"><i class="ion-chatbox-working"></i></span> <span>{{ article.comment_nb }}</span></h4></div>
+				{% else %}
+					<div class="col-md-2"><h4><span class="my-btn-color login-btn" data-toggle="modal" data-target="#login-modal"><i class="ion-chatbox-working"></i></span> <span>{{ article.comment_nb }}</span></h4></div>
+				{% endif %}
+				{% if request.session.account  %}
+					{% if article.liked == 0 %}
+					<div class="col-md-2"><h4><span class="my-btn-color like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></h4></div>
+					{% else %}
+					<div class="col-md-2"><h4><span class="dislike like-btn"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></h4></div>
+					{% endif %}
+				{% else %}
+					<div class="col-md-2"><h4><span class="my-btn-color login-btn" data-toggle="modal" data-target="#login-modal"><i class="ion-heart"></i></span> <span class="like-nb">{{ article.like_nb }}</span></h4></div>
+				{% endif %}
+			</div>
+			<div id="comment">
+				{% for comment in comments %}
+				<div class="row py-2">
+					<div class="col-md-1">
+						<div class="square">
+							<a href="{% url 'blog:profile' comment.com_user.id %}"><img class="rounded sqaure-image" src="{{ comment.com_user.image.url }}"/></a>
+						</div>
+					</div>
+					<div class="col-md-10">
+						<div>
+							<a href="{% url 'blog:profile' comment.com_user.id %}">{{ comment.com_user.username }}</a><span class="bullet text-muted">•</span><small class="text-muted">{{ comment.time_stamp|timesince|upto:',' }} ago</small>
+						</div>
+						<div>
+							{{ comment.content }}
+						</div>
+						<div data-id={{ comment.id }}>
+								{% for reply in comment.replies %}
+								<div class="row py-2">
+									<div class="col-md-1 mt-2">
+										<div class="square">
+											<a href="{% url 'blog:profile' reply.rep_user.id %}"><img class="rounded sqaure-image" src="{{ reply.rep_user.image.url }}"/></a>
+										</div>
+									</div>
+									<div class="col-md-10">
+										<div>
+											<a href="{% url 'blog:profile' reply.rep_user.id %}">{{ reply.rep_user.username }}</a><span class="bullet text-muted">•</span><small class="text-muted">{{ reply.time_stamp|timesince|upto:',' }} ago</small>
+										</div>
+										<div>
+											{{ reply.content }}
+										</div>
+									</div>
+								</div>
+								{% endfor %}
+
+						</div>
+					</div>
+					<div class="col-md-1 text-center">
+						{% if request.session.account  %}
+							<span id="comment-id" comment-id={{ comment.id }} class="my-btn-color reply-btn" data-toggle="modal" data-target="#reply-modal"><h4><i class="ion-chatbox-working"></i></h4></span>
+						{% else %}
+							<span id="comment-id" comment-id={{ comment.id }} class="my-btn-color login-btn" data-toggle="modal" data-target="#login-modal"><h4><i class="ion-chatbox-working"></i></h4></span>
+						{% endif %}
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="row pt-2">
+				<div class="col-md-12">
+					<a class="my-btn-color" href="{% url 'blog:profile' author.id %}"><h3>{{ author.username}}</h3></a>
+				</div>
+			</div>
+			<div class="row py-2">
+				<div class="col-md-12">
+					<a href="{% url 'blog:profile' author.id %}"><img class="photo-right rounded" src="{{ author.image.url }}" align="left" /></a>
+					<p>{{ author.profile }}</p>
+				</div>
+			</div>
+			<div class="row pt-2" style="display: none">
+				<div class="col-md-12">
+					<h3>Tags</h3>
+				</div>
+			</div>
+			<div class="row py-2" style="display: none">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-outline-primary btn-sm mb-1">Java</button>
+					<button type="button" class="btn btn-outline-primary btn-sm mb-1">MySQL</button>
+					<button type="button" class="btn btn-outline-primary btn-sm mb-1">Python</button>
+					<button type="button" class="btn btn-outline-primary btn-sm mb-1">Django</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="comment-modal" tabindex="-1" role="dialog" aria-labelledby="comment-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="myModalLabel">Add a comment</h5>
+	            </div>
+				<div class="modal-body">
+					{% csrf_token %}
+					<input id="article-id" type="hidden" value=""/>
+					<textarea id="comment-content" class="form-control" rows="3"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary comment-submit" data-dismiss="modal">Submit</button>
+				</div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reply-modal" tabindex="-1" role="dialog" aria-labelledby="reply-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="myModalLabel">Add a Reply</h5>
+	            </div>
+				<div class="modal-body">
+					{% csrf_token %}
+					<input id="comment-id" type="hidden" value=""/>
+					<textarea id="reply-content" class="form-control" rows="3"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary reply-submit" data-dismiss="modal">Submit</button>
+				</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
