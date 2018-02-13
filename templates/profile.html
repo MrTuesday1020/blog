@@ -60,6 +60,7 @@
 	<div class="tab-content" id="myTabContent">
 		<div class="tab-pane fade show active" id="articles" role="tabpanel" aria-labelledby="articles-tab">
 			<div class="container col-md-12">
+				{% if articles %}
 				{% for article in articles %}
 				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
 					<div class="col-md-10">
@@ -91,10 +92,16 @@
 					</div>
 				</div>
 				{% endfor %}
+				{% else %}
+				<div class="py-2 text-center">
+					<h4>Oops! Nothing Here!</h4>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 		<div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
 			<div class="container col-md-12">
+				{% if followers %}
 				{% for follower in followers %}
 				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
 					<div class="col-md-1">
@@ -122,10 +129,16 @@
 					{% endif %}
 				</div>
 				{% endfor %}
+				{% else %}
+				<div class="py-2 text-center">
+					<h4>Oops! Nothing Here!</h4>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 		<div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
 			<div class="container col-md-12">
+				{% if followings %}
 				{% for following in followings %}
 				<div class="row py-2 border border-top-0 border-right-0 border-left-0">
 					<div class="col-md-1">
@@ -153,6 +166,11 @@
 					{% endif %}
 				</div>
 				{% endfor %}
+				{% else %}
+				<div class="py-2 text-center">
+					<h4>Oops! Nothing Here!</h4>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

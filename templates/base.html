@@ -13,42 +13,44 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-white navi-bottom">
 			<a class="navbar-brand text-primary" href="{% url 'blog:home' 1 %}"><b>MT</b></a>
 
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			
-				<form class="form-inline my-2 my-lg-0 mr-auto navi-search" action="{% url 'blog:search'%}" method="post">
-					{% csrf_token %}
-					<input type="hidden" name="page" value=1>
-					<input class="form-control mr-sm-2" name="keyword" type="search" placeholder="Search for ..." aria-label="Search" required>
-					<select name="selection" class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelectPref">
-						<option value="user" selected>User</option>
-						<option value="article">Article</option>
-					</select>
-					<button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-				</form>
-				{% if request.session.account %}
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="navbar-brand text-success" href="{% url 'blog:profile' request.session.account.id %}">Hi, {{ request.session.account.username }}</a>
-					</li>
-					<li class="nav-item">
-						<a class="navi-btn my-btn-color" href="{% url 'blog:notification' %}"><i class="ion-ios-bell"></i></a>
-					</li>
-					<li class="nav-item">
-						<a class="navi-btn my-btn-color" href="{% url 'blog:topost' %}"><i class="ion-ios-compose"></i></a>
-					</li>
-					<li class="nav-item">
-						<a class="navi-btn" href="{% url 'blog:logout' %}"><i class="ion-log-out text-danger"></i></a>
-					</li>
-				{% else %}
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="btn btn-outline-success mr-2" href="{% url 'blog:login' %}">Log in</a>
-					</li>
-					<li class="nav-item">
-						<a class="btn btn-outline-success" href="{% url 'blog:signup' %}">Sign up</a>
-					</li>
-				</ul>
-				{% endif %}
+			<!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
+			<div class="col-md-11">
+				<div class="row" id="navbarSupportedContent">
+					<form class="form-inline my-2 my-lg-0 mr-auto navi-search text-left" action="{% url 'blog:search'%}" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="page" value=1>
+						<input class="form-control mr-sm-2" name="keyword" type="search" placeholder="Search for ..." aria-label="Search" required>
+						<select name="selection" class="custom-select mb-2 mr-sm-2 mb-sm-0" id="inlineFormCustomSelectPref">
+							<option value="user" selected>User</option>
+							<option value="article">Article</option>
+						</select>
+						<button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+					</form>
+					{% if request.session.account %}
+					<ul class="my-navbar-nav text-right">
+						<li class="nav-item">
+							<a class="navbar-brand text-success" href="{% url 'blog:profile' request.session.account.id %}">Hi, {{ request.session.account.username }}</a>
+						</li>
+						<li class="nav-item">
+							<a class="navi-btn my-btn-color" href="{% url 'blog:notification' %}"><i class="ion-ios-bell"></i></a>
+						</li>
+						<li class="nav-item">
+							<a class="navi-btn my-btn-color" href="{% url 'blog:topost' %}"><i class="ion-ios-compose"></i></a>
+						</li>
+						<li class="nav-item">
+							<a class="navi-btn" href="{% url 'blog:logout' %}"><i class="ion-log-out text-danger"></i></a>
+						</li>
+					{% else %}
+					<ul class="my-navbar-nav text-right">
+						<li class="nav-item">
+							<a class="btn btn-outline-success mr-2" href="{% url 'blog:login' %}">Log in</a>
+						</li>
+						<li class="nav-item">
+							<a class="btn btn-outline-success" href="{% url 'blog:signup' %}">Sign up</a>
+						</li>
+					</ul>
+					{% endif %}
+				</div>
 			</div>
 		</nav>
 	</div>
