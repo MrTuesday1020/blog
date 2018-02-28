@@ -43,19 +43,19 @@
 				</div>
 				{% if request.session.account  %}
 					{% if user.id != request.session.account.id %}
-					<div class="col-md-2">
+					<div class="col-md-2" id="user" user-id={{ user.id }}>
 						{% if is_followed %}
-						<button class="btn btn-outline-primary btn-sm mt-1">/button>
+						<button class="btn btn-outline-primary btn-sm follow-btn">Following</button>
 						{% else %}
-						<button class="btn btn-primary btn-sm mt-1">Follow</button>
+						<button class="btn btn-primary btn-sm follow-btn">Follow</button>
 						{% endif %}
 					</div>
 					{% endif %}
-						{% else %}
-						<div class="col-md-2">
-							<button class="btn btn-primary btn-sm mt-1 login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
-						</div>
-					{% endif %}
+				{% else %}
+				<div class="col-md-2">
+					<button class="btn btn-primary btn-sm mt-1 login-btn" data-toggle="modal" data-target="#login-modal">Follow</button>
+				</div>
+				{% endif %}
 			</div>
 		{% endfor %}
 	{% endif %}
